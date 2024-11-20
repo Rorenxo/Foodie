@@ -2,7 +2,7 @@
     <section class="footer">
       <div class="box-container">
         <div class="box">
-          <img src="@/assets/assets/public icons/logo.png" alt="logo">
+          <img src="@/assets/public icons/logo.png" alt="logo">
           <p>WE ARE THE FOODIE FINDERS AND <br>WE ARE HAPPY YOU USE OUR SITE/APP</p>
           <div class="share">
             <a href="https://www.facebook.com/profile.php?id=61568776087339" target="_blank" class="fab fa-facebook"></a>

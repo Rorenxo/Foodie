@@ -133,11 +133,15 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
 }  
 
 .home h1 {
     text-align: center;
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     color: var(--primary-color);
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
@@ -145,7 +149,7 @@ body {
 /* Map Styles */
 .map-container {
     position: relative;
-    height: 120%;
+    height: 600px;
     width: 100%;
     margin: 0 auto;
     border: 2px solid var(--secondary-color);
@@ -158,7 +162,7 @@ body {
 .map-container iframe {
     position: absolute; 
     width: 100%; 
-    max-height: 120%;
+    height: 100%;
     border: 0; 
     top: 0; 
     left: 0; 
@@ -178,9 +182,14 @@ p{
 }
 
 /* Products Styles */
+.products{
+    background-color: var(--background-color);
+    padding: 2rem;
+
+}
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 2rem;
 }
 
@@ -221,6 +230,8 @@ p{
 
 .add-to-cart {
     background-color: var(--primary-color);
+    margin-left: 9rem;
+    width: 50%;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -295,8 +306,119 @@ h2 {
     background-position: center bottom;
 }
 
+/* food selection settings */
+.food {
+    padding: 2rem;
+    background-color: var(--secondary-color);
+  }
+  
+.food-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--text-color);
+    padding-bottom: 1rem;
+}
+  
+  .food-header h2 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom:  -1.7rem;
+  }
+  
+  .foods-nav ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .foods-nav li {
+    margin-left: 1rem;
+    margin-top: 5rem;
+  }
+  
+  .foods-filter {
+    text-decoration: none;
+    color: var(--text-colo3);
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s ease;
+  }
+  
+  .foods-filter.active,
+  .foods-filter:hover {
+    background-color: var(--primary-color);
+
+  }
+  
+  .food-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+  
+  .food-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  
+  .food-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .food-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .food-details {
+    padding: 1rem;
+  }
+  
+  .food-details h3 {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+    
+  }
+  
+  .food-details p {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .price {
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+  
+  .add-to-cart-btn {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-to-cart-btn:hover {
+    background-color: var(--secondary-color);
+  }
+
 /* Stores Styles */
-.stores {
+.stores{
     padding: 2rem;
     background-color: var(--background-color);
 }
@@ -313,7 +435,7 @@ h2 {
 .stores-header h2 {
     font-size: 2rem;
     color: var(--primary-color);
-    margin: 0;
+    margin-bottom: -1.7rem;
 }
 
 .cuisine-nav ul {
@@ -325,18 +447,22 @@ h2 {
 
 .cuisine-nav ul li {
     margin-left: 1rem;
+    margin-top: 5rem;
 }
 
 .cuisine-nav ul li a {
-    color: var(--text-color);
     text-decoration: none;
-    transition: color var(--transition-speed);
+    color: var(--text-color);
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s ease;
 }
 
 .cuisine-nav ul li a:hover,
 .cuisine-nav ul li a.active {
-    color: var(--primary-color);
-    text-decoration: underline;
+    background-color: var(--primary-color);
+    color:var(--text-colo3)
 }
 
 .store-list {
@@ -423,7 +549,7 @@ h2 {
 .footer .box-container .box h3 {
     font-size: 1.2rem;
     color: var(--primary-color);
-    padding: 1rem 0;
+    padding: 1rem 1rem;
 }
 
 .footer .box-container .box .links {
@@ -462,11 +588,11 @@ h2 {
 }
 
 .footer .box-container .box .share a {
-    height: 2rem;
-    width: 2rem;
-    line-height: 2rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    line-height: 2.5rem;
     border-radius: 50%;
-    font-size: 1rem;
+    font-size: 1.6rem;
     color: var(--text-colo3);
     margin-right: 0.5rem;
     background: var(--primary-color);
@@ -486,7 +612,7 @@ h2 {
 
 .footer .low {
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 1rem;
     padding-top: 2rem;
     font-size: 0.9rem;
     border-top: 1px solid #444;

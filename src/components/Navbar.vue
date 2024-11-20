@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar">
       <div class="logo">
-        <img src="@/assets/assets/public icons/logo.png" alt="Foodie Finder" style="height:70px; width: auto;">
+        <img src="@/assets/public icons/logo.png" alt="Foodie Finder" style="height:70px; width: auto;">
       </div>
       <ul class="nav-links">
         <i class="fa-solid fa-bars"></i>
