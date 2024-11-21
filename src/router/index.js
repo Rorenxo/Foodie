@@ -1,21 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Footer from '../components/Footer.vue'
-import Navbar from '../components/Navbar.vue'
+import Landing from '@/views/landing.vue'
+import Login from '@/views/login.vue'
+import Main from '@/views/main.vue'
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    components: {
-      default: Navbar,
-      footer: Footer,
-    },
+    path: '/landing',
+    name: 'Landing',
+    component: Landing
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/main',
+    name: 'Main',
+    component: Main,
+  }
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  history: createWebHistory(),
+  routes
 })
-
 export default router
+

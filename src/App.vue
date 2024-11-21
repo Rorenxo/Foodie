@@ -1,23 +1,24 @@
-<script setup>
-import { RouterView } from 'vue-router'
-import Navbar from './components/Navbar.vue'
-import Main from './views/Main.vue'
-import Footer from './components/Footer.vue'
+<script >
+import { RouterView, useRoute } from 'vue-router';
+import Footer from '@/components/footer.vue';
+
+export default {
+  components: {
+    Footer,
+  },
+};
+
 </script>
 
 <template>
   <div id="app">
-    <Navbar />
-    <Main />
-    <Footer />
+    <RouterView /> <!-- Dynamically renders Main or Landing based on route -->
+    <Footer v-if="$route.name !== 'login'"/>
   </div>
 </template>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-@import '@/assets/base.css';
-@import '@/assets/main.css';
-
 :root {
     --primary-color: #e60023;
     --secondary-color: #333;
@@ -43,46 +44,5 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background: var(--background-color);
-}
-/* Responsive styles */
-
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .nav-links {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        margin-top: 1rem;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .nav-links .fa-solid {
-        display: flex;
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
-
-    .product-grid,
-    .store-list {
-        grid-template-columns: repeat(1, 1fr);
-    }
-
-    .footer .box-container {
-        grid-template-columns: 1fr;
-    }
-
-    .footer .box img,
-    .footer .box .share {
-        padding-left: 0;
-        margin-left: 0;
-        justify-content: center;
-    }
 }
 </style>
