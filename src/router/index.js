@@ -5,6 +5,10 @@ import Main from '@/views/main.vue'
 
 const routes = [
   {
+    path: '/',
+    redirect: '/landing'
+  },
+  {
     path: '/landing',
     name: 'Landing',
     component: Landing
@@ -25,5 +29,5 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 })
-export default router
 
+export default router

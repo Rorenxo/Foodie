@@ -1,21 +1,26 @@
-<script >
-import { RouterView, useRoute } from 'vue-router';
-import Footer from '@/components/footer.vue';
-
-export default {
-  components: {
-    Footer,
-  },
-};
-
-</script>
-
 <template>
   <div id="app">
-    <RouterView /> <!-- Dynamically renders Main or Landing based on route -->
-    <Footer v-if="$route.name !== 'login'"/>
+    <RouterView />
+    <Footer v-if="showFooter" />
   </div>
 </template>
+
+<script setup>
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import Footer from "@/components/footer.vue";
+
+const route = useRoute();
+
+// List of routes where the footer should appear
+const footerRoutes = ["/main", "/landing"];
+
+// Computed property to check if the footer should be displayed
+const showFooter = computed(() => {
+  console.log("Current route path:", route.path); // Debugging route path
+  return footerRoutes.includes(route.path);
+});
+</script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
