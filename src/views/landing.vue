@@ -262,7 +262,7 @@
       
       
       
-      const cuisines = ref(['All', 'Italian', 'Korean', 'Chinese', 'RestoBar'])
+      const cuisines = ref(['All', 'Italian', 'Korean', 'Chinese', 'French'])
       
       const stores = ref([
         {
@@ -288,10 +288,11 @@
         },
         {
           id: 4,
-          name: 'Pirate Bistro',
-          address: '532 Waterfront Rd, Subic Bay Freeport Zone',
-          image: 'stores/pirate bistro.jpg',
-          cuisine: 'restobar'
+          name: 'French Brew Café',
+          address: 'Tanguille Street, Masinloc, Zambales',
+          image: 'stores/French.jpg',
+          cuisine: 'french',
+          link: '/store/French Brew'
         }
       ])
       //function for selection store

@@ -12,12 +12,11 @@ import Footer from "@/components/footer.vue";
 
 const route = useRoute();
 
-// List of routes where the footer should appear
-const footerRoutes = ["/main", "/landing"];
+const footerRoutes = ["/main", "/landing", "/store/gourmet-garage-subic"];
 
-// Computed property to check if the footer should be displayed
+
 const showFooter = computed(() => {
-  console.log("Current route path:", route.path); // Debugging route path
+  console.log("Current route path:", route.path); 
   return footerRoutes.includes(route.path);
 });
 </script>

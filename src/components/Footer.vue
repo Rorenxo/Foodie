@@ -21,8 +21,8 @@
 
       <div class="box">
         <h3>Quick links</h3>
-        <a href="#home" class="links"> <i class="fas fa-arrow-right"></i>Home</a>
-        <a href="#products" class="links"> <i class="fas fa-arrow-right"></i>Products</a>
+        <a href="/main#home" class="links"> <i class="fas fa-arrow-right"></i>Home</a>
+        <a href="/main#products" class="links"> <i class="fas fa-arrow-right"></i>Products</a>
         <router-link to="/login" class="links"> <i class="fas fa-arrow-right"></i>Login</router-link>
         <router-link to="/login#register" class="links"> <i class="fas fa-arrow-right"></i>Register</router-link>
       </div>
