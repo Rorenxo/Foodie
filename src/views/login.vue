@@ -133,18 +133,18 @@ const login = async () => {
   text-align: center
 }
 .little img{
-  width: 150px; /* Set desired width */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 5px; /* Optional: Add rounded corners */
+  width: 150px;
+  height: auto; 
+  border-radius: 5px; 
 }
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-image: url('/bg.jpg'); /* External URL */
-  background-size: cover; /* Ensure the background image covers the full container */
-  background-position: center; /* Center the background image */
+  background-image: url('/bg.jpg'); 
+  background-size: cover; 
+  background-position: center;
   font-family: Arial, sans-serif;
 }
 
