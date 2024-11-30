@@ -8,7 +8,8 @@
 <script setup>
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import Footer from "@/components/footer.vue";
+import Footer from "@/components/Footer.vue"; 
+
 
 const route = useRoute();
 

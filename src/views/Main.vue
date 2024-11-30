@@ -9,8 +9,8 @@
       <li><a href="/main#stores">Stores</a></li>
       <li><a href="/order">My Orders</a></li>
       <div class="box">
-        <li><router-link to="/landing" class="login">Logout</router-link></li>
-      </div>
+    <li @click="logout" class="login">Logout</li>
+  </div>
     </ul>
   </nav>
   <div class="main-content">
@@ -355,4 +355,14 @@ function getImageUrl(name) {
     return '';
   }
 }
+// Logout function
+const logout = () => {
+  // Clear the token from localStorage
+  localStorage.removeItem('token')
+
+  // Redirect to login page
+  router.push('/login')
+}
+
+
 </script>
