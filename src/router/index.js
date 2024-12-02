@@ -1,30 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import Landing from '@/views/landing.vue'
 import Login from '@/views/login.vue'
-import Main from '@/views/main.vue'
+import Main from '@/views/Main.vue'
 import Store from '@/views/store.vue'
 import order from '@/views/myorder.vue'
 
+
 const routes = [
-  {
-    path: '/',
-    redirect: '/landing'
-  },
-  {
-    path: '/landing',
-    name: 'Landing',
-    component: Landing
-  },
+  { path: '/', component: Landing },
+  { path: '/main', component: Main, meta: { requiresAuth: true } },
+  { path: '/landing', component: Landing }, // Define the '/landing' route
   {
     path: '/login',
     name: 'Login',
     component: Login
   },
-  {
-    path: '/main',
-    name: 'Main',
-    component: Main,
-  },
+ 
   {
     path: '/order',
     name: 'Order',
@@ -218,4 +210,37 @@ const router = createRouter({
   routes
 })
 
-export default router
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  // Check if the route requires authentication
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // If the user is not logged in (i.e., no token in localStorage)
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // Redirect to the login page if not authenticated
+      next({ path: '/login' });
+    } else {
+      // Proceed to the route if authenticated
+      next();
+    }
+  } else {
+    // If no authentication required, proceed to the route
+    next();
+  }
+});
+
+// Redirect to the login page if already logged in and trying to go to /login
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  
+  if (to.path === '/login' && token) {
+    // If user is already logged in, redirect them to the main page
+    next({ path: '/main' });
+  } else {
+    next();
+  }
+});
+// Export the router object
+export default router;
+
+

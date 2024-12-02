@@ -85,20 +85,20 @@ const register = async () => {
         email: registerEmail.value,
         password: registerPassword.value
       }),
-    })
-    const data = await response.json()
-    message.value = data.message
-    error.value = !response.ok
+    });
+    const data = await response.json();
+    message.value = data.message;
+    error.value = !response.ok;
     if (response.ok) {
       setTimeout(() => {
-        isRegistering.value = false
-      }, 1500)
+        isRegistering.value = false;
+      }, 1500);
     }
   } catch (err) {
-    message.value = 'An error occurred during registration'
-    error.value = true
+    message.value = 'An error occurred during registration';
+    error.value = true;
   }
-}
+};
 
 const login = async () => {
   try {
@@ -111,20 +111,25 @@ const login = async () => {
         username: loginUsername.value,
         password: loginPassword.value
       }),
-    })
-    const data = await response.json()
+    });
+    const data = await response.json();
     if (response.ok) {
-      localStorage.setItem('token', data.token)
-      router.push('/main')
+      localStorage.setItem('token', data.token); // Store the token
+      router.push('/main'); // Redirect to main page
     } else {
-      message.value = data.message
-      error.value = true
+      message.value = data.message;
+      error.value = true;
     }
   } catch (err) {
-    message.value = 'An error occurred during login'
-    error.value = true
+    message.value = 'An error occurred during login';
+    error.value = true;
   }
-}
+};
+
+
+
+
+
 </script>
 
 <style scoped>
