@@ -1,183 +1,468 @@
 <template>
-    <div class="min-h-screen bg-gray-100">
-      <nav class="navbar">
-        <div class="logo">
-          <img src="@/assets/public icons/logo.png" alt="Foodie Finder" class="logo-image">
+  <div class="cart-page">
+    <h1 class="cart-title">Your Cart</h1>
+    
+    <div class="cart-container">
+      <div class="cart-items">
+        <div class="cart-header">
+          <span class="header-product">PRODUCT</span>
+          <span class="header-price">PRICE</span>
+          <span class="header-quantity">QUANTITY</span>
+          <span class="header-total">TOTAL</span>
+          <span class="header-remove"></span>
         </div>
-        <ul class="nav-links">
-          <i class="fa-solid fa-bars"></i>
-          <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/#stores">Stores</router-link></li>
-          <li><router-link to="/order">My Orders</router-link></li>
-          <div class="box">
-            <li><router-link to="/landing" class="login">Logout</router-link></li>
-          </div>
-        </ul>
-      </nav>
-  
-      <div class="container">
-        <h1 class="page-title">My Orders</h1>
-  
-        <div class="order-container">
-          <div v-if="cartStore.orders.length === 0" class="empty-orders">
-            You have no orders yet. Start shopping to place an order!
-          </div>
-          <div v-else>
-            <div v-for="order in cartStore.orders" :key="order.id" class="order-item">
-              <h2 class="order-title">Order #{{ order.id }}</h2>
-              <p class="order-date">Placed on: {{ new Date(order.date).toLocaleString() }}</p>
-              <div v-for="item in order.items" :key="item.id" class="order-product">
-                <div class="product-info">
-                  <img :src="getImageUrl(item.image)" :alt="item.name" class="product-image">
-                  <div>
-                    <h3 class="product-name">{{ item.name }}</h3>
-                    <p class="product-quantity">Quantity: {{ item.quantity }}</p>
-                    <p class="product-price">Price: ₱{{ item.price * item.quantity }}</p>
-                  </div>
-                </div>
-              </div>
-              <div class="order-total">
-                <p>Total: ₱{{ order.total.toFixed(2) }}</p>
-              </div>
+
+        <div v-if="cartStore.items.length === 0" class="empty-cart">
+          Your cart is empty
+        </div>
+
+        <div v-else v-for="item in cartStore.items" :key="item.id" class="cart-item">
+          <div class="item-product">
+            <img :src="getImageUrl(item.image)" :alt="item.name" class="item-image" />
+            <div class="item-details">
+              <h3>{{ item.name }}</h3>
+              <p class="item-store">From: {{ item.storeName }}</p>
             </div>
           </div>
+          <div class="item-price">₱{{ item.price }}</div>
+          <div class="item-quantity">
+            <button @click="decrementQuantity(item)" class="quantity-btn" :disabled="item.quantity <= 1">−</button>
+            <span>{{ item.quantity }}</span>
+            <button @click="incrementQuantity(item)" class="quantity-btn">+</button>
+          </div>
+          <div class="item-total">₱{{ item.price * item.quantity }}</div>
+          <button @click="removeFromCart(item)" class="remove-btn">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
       </div>
+
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>₱{{ cartStore.totalPrice }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span>0</span>
+        </div>
+        <div class="coupon-code">
+          <input v-model="couponCode" placeholder="Enter coupon code" class="coupon-input" />
+          <button @click="applyCoupon" class="apply-coupon-btn">Apply Coupon</button>
+          <p v-if="couponError" class="coupon-error">{{ couponError }}</p>
+          <div v-if="cartStore.appliedCoupon" class="applied-coupon">
+            <p>Coupon applied: {{ cartStore.appliedCoupon }}</p>
+            <button @click="removeCoupon" class="remove-coupon-btn">Remove Coupon</button>
+          </div>
+        </div>
+        <div class="summary-total">
+          <span>Total</span>
+          <span v-if="cartStore.appliedCoupon" class="discounted-price">
+            <s>₱{{ cartStore.totalPrice.toFixed(2) }}</s>
+            ₱{{ cartStore.discountedTotalPrice.toFixed(2) }}
+          </span>
+          <span v-else>₱{{ cartStore.totalPrice.toFixed(2) }}</span>
+        </div>
+        <div class="payment-options">
+          <h3>Payment Method</h3>
+          <div class="payment-option">
+            <input type="radio" id="gcash" value="gcash" v-model="paymentMethod">
+            <label for="gcash">GCash</label>
+          </div>
+          <div class="payment-option">
+            <input type="radio" id="cod" value="cod" v-model="paymentMethod">
+            <label for="cod">Cash on Delivery</label>
+          </div>
+        </div>
+        <button @click="checkout" class="checkout-btn" :disabled="!paymentMethod || cartStore.items.length === 0">
+          CHECKOUT
+        </button>
+      </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { useCartStore } from '@/cart/cart'
-  
-  const cartStore = useCartStore()
-  
-  function getImageUrl(name) {
-    try {
-      return new URL(`../assets/${name}`, import.meta.url).href
-    } catch (error) {
-      console.error("Error resolving image:", name, error)
-      return ''
-    }
+
+    <div v-if="showCheckoutPrompt" class="checkout-prompt">
+      <div class="prompt-content">
+        <h2>Order Confirmation</h2>
+        <p>Your order has been successfully placed!</p>
+        <button @click="closeCheckoutPrompt" class="close-prompt-btn">Close</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { useCartStore } from '@/cart/cart'
+import { useRouter } from 'vue-router'
+
+const cartStore = useCartStore()
+const router = useRouter()
+const paymentMethod = ref('')
+const showCheckoutPrompt = ref(false)
+const couponCode = ref('');
+const couponError = ref('');
+
+const incrementQuantity = (item) => {
+  cartStore.addItem({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    storeId: item.storeId,
+    storeName: item.storeName,
+    image: item.image
+  })
+}
+
+const decrementQuantity = (item) => {
+  if (item.quantity > 1) {
+    cartStore.decrementItem(item.id)
   }
-  </script>
-  
-  <style scoped>
-  .navbar {
-    background-color: #f1f1f1;
-    padding: 1rem;
+}
+
+const removeFromCart = (item) => {
+  cartStore.removeItem(item.id)
+}
+
+const checkout = () => {
+  if (paymentMethod.value && cartStore.items.length > 0) {
+    showCheckoutPrompt.value = true
+  }
+}
+
+const closeCheckoutPrompt = () => {
+  showCheckoutPrompt.value = false
+  cartStore.clearCart() 
+  router.push('/main') 
+}
+
+const getImageUrl = (name) => {
+  if (!name) return ''
+  try {
+    return new URL(`../assets/${name}`, import.meta.url).href
+  } catch (error) {
+    console.error("Error resolving image:", name, error)
+    return ''
+  }
+}
+
+const applyCoupon = () => {
+  if (cartStore.applyCoupon(couponCode.value)) {
+    couponError.value = '';
+    couponCode.value = '';
+  } else {
+    couponError.value = 'Invalid or already used coupon';
+  }
+};
+
+const removeCoupon = () => {
+  cartStore.removeCoupon();
+};
+</script>
+
+<style scoped>
+.cart-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.cart-title {
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.cart-container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+}
+
+.cart-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 40px;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr 40px;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  align-items: center;
+}
+
+.item-product {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item-details h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.item-store {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+}
+
+.quantity-btn:hover {
+  background: #f8fafc;
+}
+
+.quantity-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.remove-btn {
+  border: none;
+  background: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.remove-btn:hover {
+  color: #ef4444;
+}
+
+.order-summary {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  height: fit-content;
+}
+
+.order-summary h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: #64748b;
+}
+
+.coupon-code {
+  margin: 1.5rem 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.coupon-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+}
+
+.apply-coupon-btn {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.apply-coupon-btn:hover {
+  background: #2563eb;
+}
+
+.coupon-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.applied-coupon {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.remove-coupon-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  text-decoration: underline;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+}
+
+.payment-options {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.payment-options h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.payment-option {
+  margin-bottom: 0.5rem;
+}
+
+.payment-option label {
+  margin-left: 0.5rem;
+}
+
+.checkout-btn {
+  width: 100%;
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.checkout-btn:hover {
+  background: #15803d;
+}
+
+.checkout-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+  grid-column: 1 / -1;
+}
+
+.checkout-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.prompt-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.close-prompt-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.close-prompt-btn:hover {
+  background-color: #15803d;
+}
+
+.discounted-price s {
+  color: #64748b;
+  margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .cart-container {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-header {
+    display: none;
+  }
+
+  .cart-item {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .item-price, .item-quantity, .item-total {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    padding: 0 1rem;
   }
-  
-  .nav-links {
-    list-style: none;
+
+  .item-price::before {
+    content: 'Price:';
+    color: #64748b;
+  }
+
+  .item-quantity::before {
+    content: 'Quantity:';
+    color: #64748b;
+  }
+
+  .item-total::before {
+    content: 'Total:';
+    color: #64748b;
+  }
+
+  .remove-btn {
+    width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: center;
+    color: #ef4444;
   }
-  
-  .nav-links li {
-    margin-left: 1rem;
-  }
-  
-  .nav-links a {
-    color: #333;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  
-  .nav-links a:hover {
-    color: #e53e3e;
-  }
-  
-  .box a {
-    border: 1px solid #e53e3e;
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-  }
-  
-  .box a:hover {
-    background-color: #e53e3e;
-    color: white;
-  }
-  
-  .logo-image {
-    height: 70px;
-    width: auto;
-  }
-  
-  .page-title {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-  
-  .order-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .order-item {
-    background-color: white;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .order-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  .order-date {
-    font-size: 0.875rem;
-    color: #666;
-    margin-bottom: 1rem;
-  }
-  
-  .order-product {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .product-info {
-    display: flex;
-    align-items: center;
-  }
-  
-  .product-image {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    margin-right: 1rem;
-  }
-  
-  .product-name {
-    font-weight: 500;
-  }
-  
-  .product-quantity, .product-price {
-    font-size: 0.875rem;
-    color: #666;
-  }
-  
-  .order-total {
-    font-weight: bold;
-    text-align: right;
-    margin-top: 1rem;
-  }
-  
-  .empty-orders {
-    text-align: center;
-    color: #666;
-    padding: 2rem;
-  }
-  </style>
-  
+}
+</style>
+

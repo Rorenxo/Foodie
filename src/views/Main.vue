@@ -1,121 +1,198 @@
 <template>
-  <nav class="navbar">
-    <div class="logo">
-      <img src="@/assets/public icons/logo.png" alt="Foodie Finder" style="height:70px; width: auto;">
-    </div>
-    <ul class="nav-links">
-      <i class="fa-solid fa-bars"></i>
-      <li><a href="/main#home">Home</a></li>
-      <li><a href="/main#stores">Stores</a></li>
-      <li><a href="/order">My Orders</a></li>
-      <div class="box">
-        <li><router-link to="/landing" class="login">Logout</router-link></li>
+  <div class="food-store">
+    <nav class="navbar">
+      <div class="logo">
+        <img src="@/assets/public icons/logo.png" alt="Foodie Finder" style="height:70px; width: auto;">
       </div>
-    </ul>
-  </nav>
-  <div class="main-content">
-    <!-- Home Section -->
-    <section id="home" class="home">
-      <h1>LET'S FIND YOUR FOOD</h1>
-      <div id="map" class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d36691.179135002974!2d120.29477305733364!3d14.842919766125354!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396711b9c32216b%3A0xa080c3d36f2963a7!2sOlongapo%2C%20Zambales!5e0!3m2!1sen!2sph!4v1730014145286!5m2!1sen!2sph" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-    </section>
-
-    <!-- Products Section -->
-    <section id="products" class="products">
-      <h2>Popular Dishes</h2>
-      <p>Recommended and Top Trending Foods This Week!</p>
-      <div class="product-grid">
-        <div v-for="product in products" :key="product.id" class="product-card">
-          <img :src="getImageUrl(product.image)" :alt="product.name">
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.description }}</p>
-          <p class="price">price: ₱{{ product.price }}</p>
-          <button @click="addToCartAndRedirect(product)" class="add-to-cart">Add to Cart</button>
-        </div>  
-      </div>
-    </section>
-
-    <!-- Process Section -->
-    <section id="process" class="process">
-      <h2>Our Process</h2>
-      <div class="process-steps">
-        <div v-for="step in processSteps" :key="step.id" class="step">
-          <div class="step-number">
-            <i :class="step.icon"></i>
-          </div>
-          <h3>{{ step.title }}</h3>
-          <p>{{ step.description }}</p>
+      
+      <button class="menu-toggle" @click="toggleMenu" aria-label="Toggle menu">
+        <i :class="['fa-solid', isMenuOpen ? 'fa-xmark' : 'fa-bars']"></i>
+      </button>
+      
+      <ul :class="['nav-links', { 'active': isMenuOpen }]">
+        <li><a href="#home" @click="closeMenu">Home</a></li>
+        <li><a href="#stores" @click="closeMenu">Stores</a></li>
+        <li><a href="/order" @click="closeMenu">My Orders</a></li>
+        <div class="box">
+          <li><router-link to="/landing" class="login" @click="closeMenu">Logout</router-link></li>
         </div>
-      </div>
-      <div class="imagefoot"></div>
-    </section>
+      </ul>
+    </nav>
+    <div class="main-content">
+      <!-- Home Section -->
+      <section id="home" class="home">
+        <h1>LET'S FIND YOUR FOOD</h1>
+        <div id="map" class="map-container">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d36691.179135002974!2d120.29477305733364!3d14.842919766125354!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396711b9c32216b%3A0xa080c3d36f2963a7!2sOlongapo%2C%20Zambales!5e0!3m2!1sen!2sph!4v1730014145286!5m2!1sen!2sph" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </section>
 
-    <!-- Food Selection Section -->
-    <section id="food" class="food">
-      <div class="food-header">
-        <h2>Food Selection</h2>
-        <nav class="foods-nav">
-          <ul>
-            <li v-for="category in foodCategories" :key="category">
-              <a href="#" 
-                 @click.prevent="filterFoods(category)"
-                 :class="['foods-filter', { active: selectedCategory === category.toLowerCase() }]"
-                 :data-category="category.toLowerCase()">
-                {{ category }}
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div class="food-list">
-        <div v-for="food in filteredFoods" :key="food.id" class="food-card" :data-category="food.category">
-          <img :src="getImageUrl(food.image)" :alt="food.name">
-          <div class="food-details">
-            <h3>{{ food.name }}</h3>
-            <p>{{ food.description }}</p>
-            <p class="price">price: ₱{{ food.price }}</p>
-            <button @click="addToCartAndRedirect(food)" class="add-to-cart-btn">Add to Cart</button>
+      <!-- Products Section -->
+      <section id="products" class="products">
+        <h2>Popular Dishes</h2>
+        <p>Recommended and Top Trending Foods This Week!</p>
+        <div class="product-grid">
+          <div v-for="product in products" :key="product.id" class="product-card">
+            <img :src="getImageUrl(product.image)" :alt="product.name">
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <p class="price">price: ₱{{ product.price }}</p>
+            <button @click="addToCartAndRedirect(product)" class="add-to-cart">Add to Cart</button>
+          </div>  
+        </div>
+      </section>
+
+      <!-- Process Section -->
+      <section id="process" class="process">
+        <h2>Our Process</h2>
+        <div class="process-steps">
+          <div v-for="step in processSteps" :key="step.id" class="step">
+            <div class="step-number">
+              <i :class="step.icon"></i>
+            </div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
           </div>
         </div>
-      </div>
-    </section>
+        <div class="imagefoot"></div>
+      </section>
 
-    <!-- Stores Section -->
-    <section id="stores" class="stores">
-      <div class="stores-header">
-        <h2>Featured Restaurants</h2>
-        <nav class="cuisine-nav">
-          <ul>
-            <li v-for="cuisine in cuisines" :key="cuisine">
-              <a href="#" 
-                 @click.prevent="filterStores(cuisine)"
-                 :class="['cuisine-filter', { active: selectedCuisine === cuisine.toLowerCase() }]"
-                 :data-cuisine="cuisine.toLowerCase()">
-                {{ cuisine }}
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div class="store-list">
-        <router-link
-          v-for="store in filteredStores" 
-          :key="store.id" 
-          :to="store.link" 
-          class="store-card" 
-          :data-cuisine="store.cuisine"
+      <!-- Food Selection Section -->
+      <section id="food" class="food">
+    <div class="food-header">
+      <h2>Food Selection</h2>
+      <div class="category-filters">
+        <button 
+          class="filter-btn"
+          :class="{ active: selectedCategory === 'all' }"
+          @click="selectCategory('all')"
         >
-          <img :src="getImageUrl(store.image)" :alt="store.name">
-          <div class="store-details">
-            <h3>{{ store.name }}</h3>
-            <p class="address">{{ store.address }}</p>
-            <span class="visit-btn">Visit</span>
+          All
+        </button>
+        
+        <!-- Cuisine Dropdown -->
+        <div class="dropdown" :class="{ active: showCuisines }">
+          <button class="filter-btn" @click="toggleDropdown('cuisines')">
+            Cuisines <i class="fa-solid fa-caret-down"></i>
+          </button>
+          <div v-if="showCuisines" class="dropdown-content">
+            <button 
+              v-for="cuisine in cuisines" 
+              :key="cuisine"
+              class="dropdown-item"
+              @click="selectCategory(cuisine.toLowerCase())"
+            >
+              {{ cuisine }}
+            </button>
           </div>
-        </router-link>
+        </div>
+        
+        <!-- Drinks Dropdown -->
+        <div class="dropdown" :class="{ active: showDrinks }">
+          <button class="filter-btn" @click="toggleDropdown('drinks')">
+            Drinks <i class="fa-solid fa-caret-down"></i>
+          </button>
+          <div v-if="showDrinks" class="dropdown-content">
+            <div class="dropdown-section">
+              <h4>Alcoholic</h4>
+              <button 
+                v-for="drink in alcoholicDrinks" 
+                :key="drink"
+                class="dropdown-item"
+                @click="selectCategory(drink.toLowerCase())"
+              >
+                {{ drink }}
+              </button>
+            </div>
+            <div class="dropdown-section">
+              <h4>Non-Alcoholic</h4>
+              <button 
+                v-for="drink in nonAlcoholicDrinks" 
+                :key="drink"
+                class="dropdown-item"
+                @click="selectCategory(drink.toLowerCase())"
+              >
+                {{ drink }}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Shakes and Sweets Dropdown -->
+        <div class="dropdown" :class="{ active: showShakesSweets }">
+          <button class="filter-btn" @click="toggleDropdown('shakesSweets')">
+            Shakes & Sweets <i class="fa-solid fa-caret-down"></i>
+          </button>
+          <div v-if="showShakesSweets" class="dropdown-content">
+            <button 
+              v-for="item in shakesAndSweets" 
+              :key="item"
+              class="dropdown-item"
+              @click="selectCategory(item.toLowerCase())"
+            >
+              {{ item }}
+            </button>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
+    <div class="food-list">
+    <div v-for="item in filteredItems" :key="item.id" class="food-card" :data-category="item.category">
+      <img :src="getImageUrl(item.image)" :alt="item.name">
+      <div class="food-details">
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description }}</p>
+        <p class="price">Price: ₱{{ item.price }}</p>
+        <button @click="addToCartAndRedirect(item)" class="add-to-cart-btn">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  </section>
+
+      <!-- Stores Section -->
+      <section id="stores" class="stores">
+        <div class="stores-header">
+          <h2>Featured Restaurants</h2>
+          <nav class="cuisine-nav">
+            <ul>
+              <li>
+                <a href="#" 
+                   @click.prevent="filterStores('all')"
+                   :class="['cuisine-filter', { active: selectedCuisine === 'all' }]"
+                   data-cuisine="all">
+                  All
+                </a>
+              </li>
+              <li v-for="cuisine in cuisines" :key="cuisine">
+                <a href="#" 
+                   @click.prevent="filterStores(cuisine)"
+                   :class="['cuisine-filter', { active: selectedCuisine === cuisine.toLowerCase() }]"
+                   :data-cuisine="cuisine.toLowerCase()">
+                  {{ cuisine }}
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="store-list">
+          <router-link
+            v-for="store in filteredStores" 
+            :key="store.id" 
+            :to="store.link" 
+            class="store-card" 
+            :data-cuisine="store.cuisine"
+          >
+            <img :src="getImageUrl(store.image)" :alt="store.name">
+            <div class="store-details">
+              <h3>{{ store.name }}</h3>
+              <p class="address">{{ store.address }}</p>
+              <span class="visit-btn">Visit</span>
+            </div>
+          </router-link>
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -126,6 +203,16 @@ import { useCartStore } from '@/cart/cart'
 
 const cartStore = useCartStore()
 const router = useRouter()
+
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+const closeMenu = () => {
+  isMenuOpen.value = false
+}
 
 const products = ref([
   {
@@ -263,19 +350,159 @@ const foods = ref([
 const foodCategories = ref(['All', 'Italian', 'Korean', 'Chinese', 'French'])
 const selectedCategory = ref('all')
 
+const toggleDropdown = (dropdown) => {
+  switch (dropdown) {
+    case 'cuisines':
+      showCuisines.value = !showCuisines.value
+      showDrinks.value = false
+      showShakesSweets.value = false
+      break
+    case 'drinks':
+      showDrinks.value = !showDrinks.value
+      showCuisines.value = false
+      showShakesSweets.value = false
+      break
+    case 'shakesSweets':
+      showShakesSweets.value = !showShakesSweets.value
+      showCuisines.value = false
+      showDrinks.value = false
+      break
+  }
+}
+
+const selectCategory = (category) => {
+  selectedCategory.value = category
+  showCuisines.value = false
+  showDrinks.value = false
+  showShakesSweets.value = false
+}
+
 const filterFoods = (category) => {
   selectedCategory.value = category.toLowerCase()
 }
 
-const filteredFoods = computed(() => {
+const cuisines = ref(['Italian', 'Korean', 'Chinese', 'French'])
+const alcoholicDrinks = ref(['Beer', 'Wine', 'Cocktails'])
+const nonAlcoholicDrinks = ref(['Soda', 'Juice', 'Water'])
+const shakesAndSweets = ref(['Milkshakes', 'Ice Cream', 'Cakes', 'Cookies'])
+
+const newItems = ref([
+  {
+    id: 10,
+    name: 'Bière artisanale',
+    description: 'Locally brewed craft beer with unique flavors and artisanal quality.',
+    price: 90,
+    image: 'foods/bière artisanale.jpg',
+    category: ['beer', 'french']
+  },
+  {
+    id: 11,
+    name: 'Red Wine',
+    description: 'Rich and velvety red wine with fruity and earthy notes.',
+    price: 350,
+    image: 'foods/Vinrouge.jpg',
+    category: ['wine', 'french'] 
+  },
+  {
+    id: 12,
+    name: 'Limonata',
+    description: 'Lemon juice mixed with water and sugar',
+    price: 50,
+    image: 'foods/Limonata.jpg',
+    category: ['juice', 'italian' ]
+  },
+  {
+    id: 13,
+    name: 'Volvic Strawberry',
+    description: 'Refreshing natural mineral water infused with a hint of strawberry flavor.',
+    price: 30,
+    image: 'foods/Volvic.jpg',
+    category: ['water', 'french' ]
+  },
+  {
+    id: 14,
+    name: 'Ttalgi Shake',
+    description: 'Made with fresh strawberries, milk, and sugar, blended until creamy and sweet',
+    price: 150,
+    image: 'foods/Ttalgi Shake.jpg',
+    category: ['milkshakes', 'korean' ]
+  },
+  {
+    id: 15,
+    name: 'Strawberry Ice Cream',
+    description: 'Creamy strawberry ice cream',
+    price: 120,
+    image: 'foods/Bungeoppang Ice Cream.jpg',
+    category: ['ice cream', 'korean' ]
+  },
+  {
+    id: 16,
+    name: 'Negroni',
+    description: 'Italian cocktail with gin, sweet vermouth, and Campari',
+    price: 100,
+    image: 'foods/negroni.jpg',
+    category: ['cocktails', 'italian']
+  },  
+  {
+    id: 17,
+    name: 'Sesame Cookies',
+    description: 'Crunchy, nutty treats made with sesame seedsi',
+    price: 40,
+    image: 'foods/Sesame Cookies.jpg',
+    category: ['cookies', 'chinese']
+  },
+  {
+    id: 18,
+    name: 'Tiramisu',
+    description: 'luscious, coffee-flavored Italian dessert with layers of creamy mascarpone and cocoa.',
+    price: 90,
+    image: 'foods/Tiramisu.jpg',
+    category: ['cakes', 'italian']
+  }, 
+  {
+    id: 19,
+    name: 'Jianlibao',
+    description: 'Chinese carbonated soft drink, known for its sweet, citrus flavor and energizing taste',
+    price: 40,
+    image: 'foods/Jianlibao.jpg',
+    category: ['soda', 'chinese']
+  },
+])
+
+const allItems = computed(() => [...foods.value, ...newItems.value])
+
+const filteredItems = computed(() => {
   if (selectedCategory.value === 'all') {
-    return foods.value
+    return allItems.value
   }
-  return foods.value.filter(food => food.category === selectedCategory.value)
+  return allItems.value.filter(item => 
+    Array.isArray(item.category) 
+      ? item.category.includes(selectedCategory.value)
+      : item.category === selectedCategory.value
+  )
 })
 
-const cuisines = ref(['All', 'Italian', 'Korean', 'Chinese', 'French'])
+const addToCartAndRedirect = (item) => {
+  const store = stores.value.find(store => 
+    (Array.isArray(item.category) && item.category.includes(store.cuisine)) ||
+    (!Array.isArray(item.category) && store.cuisine === item.category) ||
+    store.name.toLowerCase().includes(item.category)
+  )
 
+  if (store) {
+    cartStore.addItem({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      storeId: store.id,
+      storeName: store.name
+    })
+
+    router.push(store.link)
+  } else {
+    console.error('No matching store found for this item')
+  }
+}
 const stores = ref([
   {
     id: 1,
@@ -326,27 +553,6 @@ const filteredStores = computed(() => {
 
 const cart = ref([])
 
-const addToCartAndRedirect = (item) => {
-  const store = stores.value.find(store => 
-    store.cuisine === item.category || 
-    store.name.toLowerCase().includes(item.category)
-  )
-
-
-  if (store) {
-    cartStore.addItem({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      storeId: store.id
-    })
-
-    router.push(store.link)
-  } else {
-    console.error('No matching store found for this item')
-  }
-}
-
 function getImageUrl(name) {
   try {
     return new URL(`../assets/${name}`, import.meta.url).href;
@@ -355,4 +561,9 @@ function getImageUrl(name) {
     return '';
   }
 }
+
+const showCuisines = ref(false)
+const showDrinks = ref(false)
+const showShakesSweets = ref(false)
+
 </script>

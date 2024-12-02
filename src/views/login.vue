@@ -5,7 +5,7 @@
     <img :src="('/foodie logo copy 2.png')" alt="little" />
       </div>
       
-      <div v-if="isRegistering">
+      <div id="register" v-if="isRegistering">
         <h2>Create Account</h2>
         <form @submit.prevent="register">
           <input 
@@ -31,7 +31,7 @@
         </p>
       </div>
 
-      <div id="register" v-else>
+      <div id="login" v-else>
         <h2>Welcome back!</h2>
         <form @submit.prevent="login">
           <input 
