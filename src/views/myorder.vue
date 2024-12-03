@@ -162,7 +162,7 @@ const checkout = async () => {
         paymentMethod: paymentMethod.value,
       };
 
-      const response = await fetch('http://localhost:3000/api/orders', {
+      const response = await fetch('http://localhost:4000/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
