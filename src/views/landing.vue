@@ -1,4 +1,5 @@
 <template>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <div class="food-store">
     <nav class="navbar">
       <div class="logo">
@@ -523,3 +524,11 @@ const showLoginPrompt = () => {
 }
 
 </script>
+
+<style scoped>
+
+</style>
+
+
+
+

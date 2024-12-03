@@ -65,10 +65,10 @@
     </div>
     <!-- Notification message -->
     <transition name="fade">
-      <div v-if="showNotification" class="notification">
-        Order has been saved
-      </div>
-    </transition>
+  <div v-if="showAddToCartNotification" class="add-to-cart-notification">
+    {{ addToCartNotificationMessage }}
+  </div>
+</transition>
   </div>
 </template>
 
@@ -95,15 +95,29 @@ const props = defineProps({
   storeProducts: Array
 })
 
+const showAddToCartNotification = ref(false);
+const addToCartNotificationMessage = ref("");
+
 const addToCart = (product) => {
   cartStore.addItem({
     id: product.id,
     name: product.name,
     price: product.price,
     storeId: route.params.storeId,
-    storeName: props.storeName
-  })
-}
+    storeName: props.storeName,
+  });
+
+  // Show the notification
+  addToCartNotificationMessage.value = `"${product.name}" has been added to your cart!`;
+  showAddToCartNotification.value = true;
+
+  // Hide the notification after 2 seconds
+  setTimeout(() => {
+    showAddToCartNotification.value = false;
+  }, 2000);
+
+};
+
 
 const cart = ref([])
 const removeFromCart = (item) => {
@@ -121,6 +135,7 @@ function getImageUrl(name) {
     return '';
   }
 }
+
 </script>
 
 <style scoped>
@@ -431,4 +446,48 @@ function getImageUrl(name) {
     grid-template-columns: 1fr;
   }
 }
+.add-to-cart-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.add-to-order-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 </style>

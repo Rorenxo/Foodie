@@ -5,7 +5,7 @@ export const useCartStore = defineStore('cart', {
     items: [],
     coupons: {
       'DISCOUNT20': { discount: 0.2, used: false },
-      'DISCOUNT50': { discount: 0.5, used: false }
+      'DISCOUNT50': { discount: 0.5, used: false },
     },
     appliedCoupon: null,
   }),
