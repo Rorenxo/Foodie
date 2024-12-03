@@ -163,6 +163,7 @@ const checkout = async () => {
       const orderData = {
         items: cartStore.items,
         totalPrice: cartStore.totalPrice,
+        discountedTotal: cartStore.appliedCoupon ? cartStore.discountedTotalPrice : null, // Include discounted total if coupon applied
         paymentMethod: paymentMethod.value,
       };
 
@@ -192,6 +193,7 @@ const checkout = async () => {
     }
   }
 };
+
 </script>
 
 <style scoped>

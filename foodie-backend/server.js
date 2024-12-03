@@ -15,8 +15,8 @@ app.use(bodyParser.json());
 // Connect to MySQL
 const db = mysql.createConnection({
   host: 'localhost',
-  user: 'root', // replace with your MySQL username
-  password: '', // replace with your MySQL password
+  user: 'root', 
+  password: '', 
   database: 'foodie_finder'
 });
 
@@ -92,23 +92,30 @@ app.listen(port, () => {
 });
 //orders
 app.post('/api/orders', (req, res) => {
-  const { items, totalPrice, paymentMethod } = req.body;
+  const { items, totalPrice, discountedTotal, paymentMethod } = req.body;
 
   if (!items || !totalPrice || !paymentMethod) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  const orderQuery = `INSERT INTO orders (items, total_price, payment_method, created_at) VALUES (?, ?, ?, NOW())`;
+  const finalTotal = discountedTotal || totalPrice; // Use discounted total if provided
 
-  db.query(orderQuery, [JSON.stringify(items), totalPrice, paymentMethod], (err, result) => {
-    if (err) {
-      console.error('Error saving order:', err);
-      return res.status(500).json({ error: 'Failed to save order' });
+  const orderQuery = `
+    INSERT INTO orders (items, total_price, discounted_total, payment_method, created_at) 
+    VALUES (?, ?, ?, ?, NOW())
+  `;
+
+  db.query(
+    orderQuery,
+    [JSON.stringify(items), totalPrice, finalTotal, paymentMethod],
+    (err, result) => {
+      if (err) {
+        console.error('Error saving order:', err);
+        return res.status(500).json({ error: 'Failed to save order' });
+      }
+      res.status(201).json({ message: 'Order saved successfully', orderId: result.insertId });
     }
-    res.status(201).json({ message: 'Order saved successfully', orderId: result.insertId });
-  });
+  );
 });
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000.');
-});
+
