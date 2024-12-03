@@ -1,6 +1,7 @@
 <template>
   <div class="auth-container">
     <div class="auth-box">
+      <div class="back-button" @click="goBack">← Back</div>
       <div class="little">
     <img :src="('/foodie logo copy 2.png')" alt="little" />
       </div>
@@ -125,6 +126,9 @@ const login = async () => {
     error.value = true;
   }
 };
+const goBack = () => {
+  router.push('landing'); // Replace '/' with the route name or path for your landing page
+};
 
 
 
@@ -133,7 +137,19 @@ const login = async () => {
 </script>
 
 <style scoped>
+.back-button {
+  font-size: 1rem;
+  color: #000000;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 1rem; /* Space below the back button */
+  display: inline-block;
+}
 
+.back-button:hover {
+  text-decoration: underline;
+  color: #b51212;
+}
 .little{
   text-align: center
 }

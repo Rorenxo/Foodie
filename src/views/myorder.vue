@@ -1,5 +1,6 @@
 <template>
   <div class="cart-page">
+    <div class="back-button-x" @click="goBack">×</div>
     <h1 class="cart-title">Your Cart</h1>
     
     <div class="cart-container">
@@ -103,6 +104,9 @@ const showCheckoutPrompt = ref(false)
 const couponCode = ref('');
 const couponError = ref('');
 
+const goBack = () => {
+  router.push('/main'); // Replace '/main' with your desired route
+}
 const incrementQuantity = (item) => {
   cartStore.addItem({
     id: item.id,
@@ -191,6 +195,24 @@ const checkout = async () => {
 </script>
 
 <style scoped>
+.back-button-x {
+  position: absolute;
+  top: 1rem; /* Adjust based on your layout */
+  left: 3rem; /* Adjust based on your layout */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000000; /* Red color for a clear indication */
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+}
+.back-button-x:hover {
+  color: #dc2626; /* Darker red on hover */
+}
+.back-button-x:focus {
+  outline: none;
+}
 .cart-page {
   max-width: 1200px;
   margin: 0 auto;
