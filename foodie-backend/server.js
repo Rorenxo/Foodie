@@ -90,3 +90,25 @@ app.post('/login', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+//orders
+app.post('/api/orders', (req, res) => {
+  const { items, totalPrice, paymentMethod } = req.body;
+
+  if (!items || !totalPrice || !paymentMethod) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const orderQuery = `INSERT INTO orders (items, total_price, payment_method, created_at) VALUES (?, ?, ?, NOW())`;
+
+  db.query(orderQuery, [JSON.stringify(items), totalPrice, paymentMethod], (err, result) => {
+    if (err) {
+      console.error('Error saving order:', err);
+      return res.status(500).json({ error: 'Failed to save order' });
+    }
+    res.status(201).json({ message: 'Order saved successfully', orderId: result.insertId });
+  });
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000.');
+});

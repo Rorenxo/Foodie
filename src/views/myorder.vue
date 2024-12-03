@@ -124,11 +124,6 @@ const removeFromCart = (item) => {
   cartStore.removeItem(item.id)
 }
 
-const checkout = () => {
-  if (paymentMethod.value && cartStore.items.length > 0) {
-    showCheckoutPrompt.value = true
-  }
-}
 
 const closeCheckoutPrompt = () => {
   showCheckoutPrompt.value = false
@@ -157,6 +152,41 @@ const applyCoupon = () => {
 
 const removeCoupon = () => {
   cartStore.removeCoupon();
+};
+const checkout = async () => {
+  if (paymentMethod.value && cartStore.items.length > 0) {
+    try {
+      const orderData = {
+        items: cartStore.items,
+        totalPrice: cartStore.totalPrice,
+        paymentMethod: paymentMethod.value,
+      };
+
+      const response = await fetch('http://localhost:3000/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save order.');
+      }
+
+      const result = await response.json();
+      console.log('Order saved:', result);
+
+      // Show success prompt
+      showCheckoutPrompt.value = true;
+
+      // Clear cart after successful order
+      cartStore.clearCart();
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      alert('Failed to process the order. Please try again.');
+    }
+  }
 };
 </script>
 
